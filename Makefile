@@ -354,23 +354,20 @@ OPT = -O3 -g3
 #OPT += -flto
 
 # C flags common to all targets
+CFLAGS += -DMBEDTLS_CONFIG_FILE=\"nrf-config.h\"
 CFLAGS += $(OPT)
-CFLAGS += -DAPP_TIMER_V2
-CFLAGS += -DAPP_TIMER_V2_RTC1_ENABLED
 CFLAGS += -DBOARD_PCA10056
 CFLAGS += -DCONFIG_GPIO_AS_PINRESET
-CFLAGS += -DENABLE_FEM
 CFLAGS += -DFLOAT_ABI_HARD
-CFLAGS += -DMBEDTLS_CONFIG_FILE=\"nrf-config.h\"
-CFLAGS += -DMBEDTLS_USER_CONFIG_FILE=\"nrf52840-mbedtls-config.h\"
+CFLAGS += -DFREERTOS
 CFLAGS += -DNRF52840_XXAA
-CFLAGS += -DOPENTHREAD_CONFIG_ENABLE_BUILTIN_MBEDTLS=0
-CFLAGS += -DOPENTHREAD_CONFIG_FILE=\"openthread-config-wrap.h\"
 CFLAGS += -DOPENTHREAD_FTD=1
-CFLAGS += -DUART_ENABLED=0
+CFLAGS += -DNRF_SD_BLE_API_VERSION=6
+CFLAGS += -DS140
+CFLAGS += -DSOFTDEVICE_PRESENT
 CFLAGS += -mcpu=cortex-m4
 CFLAGS += -mthumb -mabi=aapcs
-CFLAGS += -Wall -Werror
+CFLAGS += -Wall -Werror  #Werror=threat all warnings as error
 CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
 # keep every function in a separate section, this allows linker to discard unused ones
 CFLAGS += -ffunction-sections -fdata-sections -fno-strict-aliasing
