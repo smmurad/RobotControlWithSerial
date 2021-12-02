@@ -1,7 +1,7 @@
 PROJECT_NAME     := ble_app_hrs_freertos_pca10056_s140
 TARGETS          := nrf52840_xxaa
 
-SDK_ROOT := ../../..
+SDK_ROOT := ../..
 PROJ_DIR := .
 
 OUTPUT_DIRECTORY := _build
@@ -12,6 +12,8 @@ $(OUTPUT_DIRECTORY)/nrf52840_xxaa.out: \
 
 # Source files common to all targets
 SRC_FILES += \
+  $(SDK_ROOT)/components/thread/utils/thread_utils.c \
+  $(SDK_ROOT)/modules/nrfx/mdk/gcc_startup_nrf52840.S \
   $(SDK_ROOT)/modules/nrfx/mdk/gcc_startup_nrf52840.S \
   $(SDK_ROOT)/components/libraries/button/app_button.c \
   $(SDK_ROOT)/components/libraries/util/app_error.c \
@@ -125,8 +127,6 @@ SRC_FILES += \
   $(PROJ_DIR)/ble_communication/buffer.c \
   $(PROJ_DIR)/ble_communication/simple_protocol.c \
   $(PROJ_DIR)/ble_communication/arq.c \
-  $(PROJ_DIR)/mqtt_communication/mqtt_dongle_legacy.c \
-  $(PROJ_DIR)/mqtt_communication/openTreadMQTT.c \
   $(PROJ_DIR)/software/ControllerTask.c \
   $(PROJ_DIR)/software/EstimatorTask.c \
   $(PROJ_DIR)/software/NewEstimatorTask.c \
@@ -144,32 +144,6 @@ SRC_FILES += \
   $(PROJ_DIR)/test_functions/SensorTowerTester.c \
   $(PROJ_DIR)/test_functions/DebugFunctions.c \
   $(SDK_ROOT)/components/libraries/bsp/bsp_thread.c \
-  $(SDK_ROOT)/components/thread/mqtt_sn/mqtt_sn_client/mqttsn_client.c \
-  $(SDK_ROOT)/components/thread/mqtt_sn/mqtt_sn_client/mqttsn_gateway_discovery.c \
-  $(SDK_ROOT)/components/thread/mqtt_sn/mqtt_sn_client/mqttsn_packet_fifo.c \
-  $(SDK_ROOT)/components/thread/mqtt_sn/mqtt_sn_client/mqttsn_packet_receiver.c \
-  $(SDK_ROOT)/components/thread/mqtt_sn/mqtt_sn_client/mqttsn_packet_sender.c \
-  $(SDK_ROOT)/components/thread/mqtt_sn/mqtt_sn_client/mqttsn_platform.c \
-  $(SDK_ROOT)/components/thread/mqtt_sn/mqtt_sn_client/mqttsn_transport_ot.c \
-  $(SDK_ROOT)/components/thread/utils/thread_utils.c \
-  $(SDK_ROOT)/external/paho/mqtt-sn/mqttsn_packet/MQTTSNConnectClient.c \
-  $(SDK_ROOT)/external/paho/mqtt-sn/mqttsn_packet/MQTTSNConnectServer.c \
-  $(SDK_ROOT)/external/paho/mqtt-sn/mqttsn_packet/MQTTSNDeserializePublish.c \
-  $(SDK_ROOT)/external/paho/mqtt-sn/mqttsn_packet/MQTTSNPacket.c \
-  $(SDK_ROOT)/external/paho/mqtt-sn/mqttsn_packet/MQTTSNSearchClient.c \
-  $(SDK_ROOT)/external/paho/mqtt-sn/mqttsn_packet/MQTTSNSearchServer.c \
-  $(SDK_ROOT)/external/paho/mqtt-sn/mqttsn_packet/MQTTSNSerializePublish.c \
-  $(SDK_ROOT)/external/paho/mqtt-sn/mqttsn_packet/MQTTSNSubscribeClient.c \
-  $(SDK_ROOT)/external/paho/mqtt-sn/mqttsn_packet/MQTTSNSubscribeServer.c \
-  $(SDK_ROOT)/external/paho/mqtt-sn/mqttsn_packet/MQTTSNUnsubscribeClient.c \
-  $(SDK_ROOT)/external/paho/mqtt-sn/mqttsn_packet/MQTTSNUnsubscribeServer.c \
-  $(SDK_ROOT)/components/thread/mqtt_sn/mqtt_sn_client/mqttsn_client.c \
-  $(SDK_ROOT)/components/thread/mqtt_sn/mqtt_sn_client/mqttsn_gateway_discovery.c \
-  $(SDK_ROOT)/components/thread/mqtt_sn/mqtt_sn_client/mqttsn_packet_fifo.c \
-  $(SDK_ROOT)/components/thread/mqtt_sn/mqtt_sn_client/mqttsn_packet_receiver.c \
-  $(SDK_ROOT)/components/thread/mqtt_sn/mqtt_sn_client/mqttsn_packet_sender.c \
-  $(SDK_ROOT)/components/thread/mqtt_sn/mqtt_sn_client/mqttsn_platform.c \
-  $(SDK_ROOT)/components/thread/mqtt_sn/mqtt_sn_client/mqttsn_transport_ot.c \
   $(SDK_ROOT)/components/libraries/experimental_log/src/nrf_log_backend_rtt.c \
   $(SDK_ROOT)/components/libraries/experimental_log/src/nrf_log_backend_serial.c \
   $(SDK_ROOT)/components/libraries/experimental_log/src/nrf_log_default_backends.c \
@@ -188,8 +162,6 @@ SRC_FILES += \
   $(SDK_ROOT)/components/libraries/fstorage/nrf_fstorage_nvmc.c \
   $(SDK_ROOT)/components/libraries/fstorage/nrf_fstorage_sd.c \
   $(SDK_ROOT)/modules/nrfx/hal/nrf_nvmc.c \
- 
-
 
 # Include folders common to all targets
 INC_FOLDERS += \
@@ -343,7 +315,6 @@ INC_FOLDERS += \
   $(SDK_ROOT)/external/thedotfactory_fonts \
   $(PROJ_DIR)/drivers \
   $(PROJ_DIR)/ble_communication \
-  $(PROJ_DIR)/mqtt_communication \
   $(PROJ_DIR)/software \
   $(PROJ_DIR)/test_functions \
   $(SDK_ROOT)/components/thread/utils \
@@ -354,6 +325,16 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/libraries/uart \
   $(SDK_ROOT)/components/libraries/mem_manager/ \
   $(SDK_ROOT)/components/libraries/fstorage/ \
+
+
+#Added extra folders
+INC_FOLDERS += \
+  $(SDK_ROOT)/external/openthread/project/nrf52840 \
+  $(SDK_ROOT)/external/nrf_security/include \
+  $(SDK_ROOT)/external/openthread/project/config \
+  $(SDK_ROOT)/external/nrf_security/config \
+  $(SDK_ROOT)/external/nrf_security/mbedtls_plat_config \
+  $(SDK_ROOT)/external/nrf_security/nrf_cc310_plat/include \
 
 # Libraries common to all targets
 LIB_FILES += \
@@ -368,24 +349,28 @@ LIB_FILES += \
   $(SDK_ROOT)/external/openthread/lib/nrf52840/gcc/libopenthread-platform-utils.a \
 
 # Optimization flags
-OPT = -O3 -g3 -DDEBUG
+OPT = -O3 -g3
 # Uncomment the line below to enable link time optimization
 #OPT += -flto
 
 # C flags common to all targets
 CFLAGS += $(OPT)
+CFLAGS += -DAPP_TIMER_V2
+CFLAGS += -DAPP_TIMER_V2_RTC1_ENABLED
 CFLAGS += -DBOARD_PCA10056
 CFLAGS += -DCONFIG_GPIO_AS_PINRESET
+CFLAGS += -DENABLE_FEM
 CFLAGS += -DFLOAT_ABI_HARD
-CFLAGS += -DFREERTOS
+CFLAGS += -DMBEDTLS_CONFIG_FILE=\"nrf-config.h\"
+CFLAGS += -DMBEDTLS_USER_CONFIG_FILE=\"nrf52840-mbedtls-config.h\"
 CFLAGS += -DNRF52840_XXAA
+CFLAGS += -DOPENTHREAD_CONFIG_ENABLE_BUILTIN_MBEDTLS=0
+CFLAGS += -DOPENTHREAD_CONFIG_FILE=\"openthread-config-wrap.h\"
 CFLAGS += -DOPENTHREAD_FTD=1
-CFLAGS += -DNRF_SD_BLE_API_VERSION=6
-CFLAGS += -DS140
-CFLAGS += -DSOFTDEVICE_PRESENT
+CFLAGS += -DUART_ENABLED=0
 CFLAGS += -mcpu=cortex-m4
 CFLAGS += -mthumb -mabi=aapcs
-CFLAGS += -Wall -Werror  #Werror=threat all warnings as error
+CFLAGS += -Wall -Werror
 CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
 # keep every function in a separate section, this allows linker to discard unused ones
 CFLAGS += -ffunction-sections -fdata-sections -fno-strict-aliasing
@@ -393,7 +378,6 @@ CFLAGS += -fno-builtin -fshort-enums
 
 # C++ flags common to all targets
 CXXFLAGS += $(OPT)
-
 # Assembler flags common to all targets
 ASMFLAGS += -g3
 ASMFLAGS += -mcpu=cortex-m4
@@ -439,9 +423,9 @@ default: nrf52840_xxaa
 help:
 	@echo following targets are available:
 	@echo		nrf52840_xxaa
-	@echo		flash_softdevice
 	@echo		sdk_config - starting external tool for editing sdk_config.h
 	@echo		flash      - flashing binary
+	@echo		flash_softdevice
 
 TEMPLATE_PATH := $(SDK_ROOT)/components/toolchain/gcc
 
@@ -469,11 +453,10 @@ erase:
 
 SDK_CONFIG_FILE := $(PROJ_DIR)/config/sdk_config.h
 CMSIS_CONFIG_TOOL := $(SDK_ROOT)/external_tools/cmsisconfig/CMSIS_Configuration_Wizard.jar
+
 sdk_config:
 	java -jar $(CMSIS_CONFIG_TOOL) $(SDK_CONFIG_FILE)
 
-
-# Debug device
 debug:
 	#if pgrep /opt/openocd/bin/openocd; then pkill /opt/openocd/bin/openocd; fi
 	mergehex -m $(SDK_ROOT)/components/softdevice/s140/hex/s140_nrf52_6.0.0_softdevice.hex _build/nrf52840_xxaa.hex -o out.hex
