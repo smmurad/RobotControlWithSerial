@@ -4,33 +4,19 @@
 #include "nordic_common.h"
 #include "nrf.h"
 #include "app_error.h"
-#include "ble.h"
-#include "ble_hci.h"
-#include "ble_srv_common.h"
-#include "ble_advdata.h"
-#include "ble_advertising.h"
-#include "ble_bas.h"
-#include "ble_hrs.h"
-#include "ble_dis.h"
-#include "ble_conn_params.h"
 #include "sensorsim.h"
 #include "nrf_sdh.h"
 #include "nrf_sdh_soc.h"
-#include "nrf_sdh_ble.h"
 #include "nrf_sdh_freertos.h"
 #include "app_timer.h"
 #include "peer_manager.h"
-#include "bsp_btn_ble.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "boards.h"
 #include "timers.h"
 #include "semphr.h"
 #include "fds.h"
-#include "ble_conn_state.h"
 #include "nrf_drv_clock.h"
-#include "nrf_ble_gatt.h"
-#include "nrf_ble_qwr.h"
 #include "app_uart.h"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
@@ -49,7 +35,6 @@
 //Communication
 #include "arq.h"
 
-#include "bluetooth.h"
 #include "network.h"
 #include "server_communication.h"
 #include "simple_protocol.h" 
@@ -264,13 +249,6 @@ static void user_task(void *arg) {
     
 }
 
-
-/**@brief Function for application main entry.
-*   
-*   vMainCommunicationTask only runs if USEBLUETOOTH is true, same for vARQTask.
-*
-*/
-
 /*
 
 static void log_init(void) {
@@ -282,7 +260,6 @@ static void log_init(void) {
 
 int main(void) {
     bsp_board_init(BSP_INIT_LEDS);
-    bool erase_bonds;
     clock_init();
     ir_init();
 
@@ -321,7 +298,6 @@ int main(void) {
 
     // Do not start any interrupt that uses system functions before system initialisation.
     // The best solution is to start the OS before any other initalisation.
-    BLE_init(); //Log_init ran from here, must be initialized after uart is initialized
     arq_init();
 
     #if NRF_LOG_ENABLED
@@ -394,9 +370,6 @@ int main(void) {
      * Not to be used in final application
      * ***********************************************************************************************************************************************************/
 
-
-
-
     if (pdPASS != xTaskCreate(microsd_task, "SD", 256, NULL, 1, &handle_microsd_task))
         APP_ERROR_HANDLER(NRF_ERROR_NO_MEM);
     
@@ -408,7 +381,6 @@ int main(void) {
         if (pdPASS != xTaskCreate(vMainPoseEstimatorTask, "POSE", 256, NULL, 3, &pose_estimator_task))
             APP_ERROR_HANDLER(NRF_ERROR_NO_MEM);
     }  
-    
 
     if(USE_SPEED_CONTROLLER)
     {
@@ -416,7 +388,6 @@ int main(void) {
         APP_ERROR_HANDLER(NRF_ERROR_NO_MEM); 
 
     }
-
 
     if (pdPASS != xTaskCreate(vMainPoseControllerTask, "POSC", 512, NULL, 1, &pose_controller_task))
         APP_ERROR_HANDLER(NRF_ERROR_NO_MEM);
@@ -428,23 +399,6 @@ int main(void) {
             APP_ERROR_HANDLER(NRF_ERROR_NO_MEM); 
     
     
-
-
-	/* Not ran when using thread */
-    if (USEBLUETOOTH)
-    {
-        if(pdPASS != xTaskCreate(vARQTask, "ARQ", 256, NULL, 2, &arq_task)) {
-            NRF_LOG_INFO("vARQTask Creation Failed");
-            APP_ERROR_HANDLER(NRF_ERROR_NO_MEM);
-        }
-        vTaskSuspend(arq_task);//suspend arq task to avoid start before init and avoids init before freertos start at same time
-        //    // Creates a FreeRTOS task for the BLE stack.
-        //    // The task will run advertising_start() before entering its loop.
-        nrf_sdh_freertos_init((nrf_sdh_freertos_task_hook_t) advertising_start,&erase_bonds);
-
-    } 
-
-
 
     size_t freeHeapSize5 = xPortGetMinimumEverFreeHeapSize();
     NRF_LOG_INFO("EverFreeHeapSize5 %d", freeHeapSize5); //If 
