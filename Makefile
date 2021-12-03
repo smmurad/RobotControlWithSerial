@@ -319,6 +319,7 @@ INC_FOLDERS += \
   $(PROJ_DIR)/test_functions \
   $(SDK_ROOT)/components/thread/utils \
   $(SDK_ROOT)/external/openthread/include \
+  $(SDK_ROOT)/external/openthread/include/openthread \
   $(SDK_ROOT)/components/thread/mqtt_sn/mqtt_sn_client \
   $(SDK_ROOT)/external/paho/mqtt-sn/mqttsn_packet \
   $(SDK_ROOT)/components/thread/mqtt_sn/mqtt_sn_client \
@@ -338,15 +339,15 @@ INC_FOLDERS += \
 
 # Libraries common to all targets
 LIB_FILES += \
+  $(SDK_ROOT)/external/openthread/lib/nrf52840/gcc/libopenthread-nrf52840-sdk.a \
   $(SDK_ROOT)/external/openthread/lib/nrf52840/gcc/libopenthread-cli-ftd.a \
-  $(SDK_ROOT)/external/openthread/lib/nrf52840/gcc/libopenthread-diag.a \
   $(SDK_ROOT)/external/openthread/lib/nrf52840/gcc/libopenthread-ftd.a \
   $(SDK_ROOT)/external/openthread/lib/nrf52840/gcc/libopenthread-platform-utils.a \
-  $(SDK_ROOT)/external/openthread/lib/nrf52840/gcc/libmbedcrypto.a \
-  $(SDK_ROOT)/external/openthread/lib/nrf52840/gcc/libopenthread-nrf52840-sdk.a \
   $(SDK_ROOT)/external/nrf_cc310/lib/cortex-m4/hard-float/libnrf_cc310_0.9.12.a \
   $(SDK_ROOT)/external/openthread/lib/nrf52840/gcc/libnordicsemi-nrf52840-radio-driver.a \
   $(SDK_ROOT)/external/openthread/lib/nrf52840/gcc/libopenthread-platform-utils.a \
+  $(SDK_ROOT)/external/openthread/lib/nrf52833/gcc/libmbedcrypto.a \
+  # $(SDK_ROOT)/external/openthread/lib/nrf52833/gcc/libopenthread-diag.a \
 
 # Optimization flags
 OPT = -O3 -g3
@@ -364,7 +365,7 @@ CFLAGS += -DNRF52840_XXAA
 CFLAGS += -DOPENTHREAD_FTD=1
 CFLAGS += -DNRF_SD_BLE_API_VERSION=6
 CFLAGS += -DS140
-CFLAGS += -DSOFTDEVICE_PRESENT
+# CFLAGS += -DSOFTDEVICE_PRESENT
 CFLAGS += -mcpu=cortex-m4
 CFLAGS += -mthumb -mabi=aapcs
 CFLAGS += -Wall -Werror  #Werror=threat all warnings as error
@@ -388,7 +389,7 @@ ASMFLAGS += -DNRF52840_XXAA
 ASMFLAGS += -DOPENTHREAD_FTD=1
 ASMFLAGS += -DNRF_SD_BLE_API_VERSION=6
 ASMFLAGS += -DS140
-ASMFLAGS += -DSOFTDEVICE_PRESENT
+# ASMFLAGS += -DSOFTDEVICE_PRESENT
 
 # Linker flags
 LDFLAGS += $(OPT)
